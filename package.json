@@ -1,0 +1,16 @@
+{
+  "name": "edubridge-monorepo",
+  "version": "1.0.0",
+  "description": "EduBridge Smart School ERP Monorepo Runner",
+  "scripts": {
+    "dev": "concurrently --names \"FRONTEND,BACKEND,AUTH,CHATBOT\" --prefix-colors \"cyan,green,yellow,magenta\" \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\" \"npm start --prefix authentication\" \"npm run dev --prefix chatbot\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "author": "EduBridge Team",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1"
+  }
+}

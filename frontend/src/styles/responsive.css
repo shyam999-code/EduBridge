@@ -1,0 +1,148 @@
+/* Responsive Screen Adaptations (Plain CSS Media Queries) */
+
+/* Large Screens & Desktop Adjustments (Min-width: 1440px) */
+@media (min-width: 1440px) {
+  .page-container {
+    padding: 2.5rem;
+    gap: 2.5rem;
+  }
+}
+
+/* Medium Laptops & Tablets (Max-width: 1024px) */
+@media (max-width: 1024px) {
+  .page-container {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Hide sidebar offscreen */
+    bottom: 0;
+    z-index: 999;
+    box-shadow: var(--shadow-lg);
+    transition: left var(--transition-normal);
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  /* Overlay for active sidebar on mobile/tablet */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    animation: fadeIn var(--transition-fast);
+  }
+
+  .main-content {
+    margin-left: 0 !important; /* Sidebar is absolute, so content spans full width */
+  }
+
+  /* Show mobile sidebar toggle button */
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+}
+
+/* Tablets (Max-width: 768px) */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .search-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-wrapper {
+    width: 100%;
+  }
+
+  .filter-group {
+    justify-content: flex-start;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pagination-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
+
+/* Mobile Devices (Max-width: 576px) */
+@media (max-width: 576px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .card-header {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  .card-footer {
+    padding: 0.75rem 1rem;
+    justify-content: stretch;
+  }
+
+  .card-footer .btn {
+    flex: 1;
+  }
+
+  .custom-table th, .custom-table td {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  .avatar-cell {
+    gap: 0.5rem;
+  }
+
+  .table-avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .stats-card {
+    padding: 1.25rem;
+  }
+
+  .stats-number {
+    font-size: 1.75rem;
+  }
+
+  /* Adjust dialog widths for mobile */
+  .modal-content {
+    width: 95% !important;
+    margin: 1rem auto;
+    padding: 1.25rem !important;
+  }
+
+  .login-card {
+    padding: 1.5rem !important;
+  }
+}

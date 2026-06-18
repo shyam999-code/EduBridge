@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduBridge AI Assistant - Educational Chatbot</title>
+  <meta name="description" content="EduBridge AI Assistant is an interactive, friendly virtual AI tutor assisting students from Classes 6 to 10. Also provides career guidance and roadmaps.">
+  <meta name="keywords" content="EduBridge, AI Assistant, Educational Chatbot, Student Doubts, Career Guidance after 10th">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Style Sheet -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Marked Markdown Parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <button id="sidebar-toggle" aria-label="Toggle Sidebar Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div class="logo-area">
+        <i class="fa-solid fa-graduation-cap logo-icon"></i>
+        <h1>EduBridge AI</h1>
+      </div>
+      <button id="mobile-new-chat" title="New Chat"><i class="fa-solid fa-plus"></i></button>
+    </header>
+
+    <!-- Sidebar / Chat History -->
+    <aside class="sidebar" id="app-sidebar">
+      <!-- Top Action - New Chat -->
+      <div class="sidebar-top">
+        <div class="sidebar-brand">
+          <i class="fa-solid fa-graduation-cap logo-icon"></i>
+          <h2>EduBridge AI</h2>
+          <span class="version-badge">v2.0</span>
+        </div>
+        <button id="btn-new-chat" class="btn-new-chat">
+          <i class="fa-solid fa-plus"></i>
+          <span>New Chat</span>
+        </button>
+      </div>
+
+      <!-- Chat History list (Chronological sessions) -->
+      <div class="sessions-container">
+        <h3>Recent Chats</h3>
+        <div class="sessions-list" id="sessions-list">
+          <!-- Dynamic Chat Sessions injected by JS -->
+        </div>
+      </div>
+
+      <!-- Bottom Settings Panel -->
+      <footer class="sidebar-footer">
+        <div class="settings-panel">
+          <div class="control-group">
+            <label for="grade-select"><i class="fa-solid fa-user-graduate"></i> Grade Level</label>
+            <div class="select-wrapper">
+              <select id="grade-select" aria-label="Select Grade Level">
+                <option value="Class 6">Class 6</option>
+                <option value="Class 7">Class 7</option>
+                <option value="Class 8" selected>Class 8</option>
+                <option value="Class 9">Class 9</option>
+                <option value="Class 10">Class 10</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label for="language-select"><i class="fa-solid fa-globe"></i> Language</label>
+            <div class="select-wrapper">
+              <select id="language-select" aria-label="Select Language">
+                <option value="English" selected>English</option>
+                <option value="Hindi">Hindi (हिंदी)</option>
+                <option value="Telugu">Telugu (తెలుగు)</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <button id="clear-all-chats" class="btn-clear-all" title="Delete All History">
+          <i class="fa-solid fa-trash-can"></i>
+          <span>Clear All Chats</span>
+        </button>
+      </footer>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Main Workspace -->
+    <main class="chat-workspace">
+      <!-- Unified Header -->
+      <header class="workspace-header">
+        <div class="header-left">
+          <button id="desktop-sidebar-toggle" class="nav-toggle-btn" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-sidebar"></i>
+          </button>
+          
+          <!-- Subject Selector Dropdown -->
+          <div class="subject-dropdown-container">
+            <select id="subject-select" aria-label="Select Study Subject">
+              <option value="General Academic" selected>📚 General Study Helper</option>
+              <option value="Mathematics">➕ Mathematics</option>
+              <option value="Science">🔬 Science</option>
+              <option value="Social Studies">🌍 Social Studies</option>
+              <option value="English">🔤 English Grammar</option>
+              <option value="Hindi">🇮🇳 Hindi</option>
+              <option value="Telugu">🚩 Telugu</option>
+              <option value="Computer Basics">💻 Computer Basics</option>
+              <option value="career">🎓 Career Guidance (Post 10th)</option>
+            </select>
+            <i class="fa-solid fa-chevron-down dropdown-icon"></i>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="bot-status">
+            <div class="status-indicator online"></div>
+            <span class="status-text">EduBridge Bot</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Chat Screen Area -->
+      <section class="chat-screen" id="chat-messages-container">
+        
+        <!-- Welcome Screen (Centered like ChatGPT) -->
+        <div class="welcome-screen" id="welcome-screen">
+          <div class="welcome-logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <h2>How can I help you learn today?</h2>
+          <p class="welcome-tagline">Select a subject from the top header or choose a quick prompt to start.</p>
+          
+          <!-- Interactive cards grid -->
+          <div class="suggestion-grid" id="suggestion-box">
+            <!-- Dynamic chips -->
+          </div>
+        </div>
+
+        <!-- Scrollable Message List -->
+        <div class="messages-list" id="messages-list">
+          <!-- Dynamic bubbles -->
+        </div>
+
+        <!-- Typing Loader -->
+        <div class="typing-indicator-wrapper" id="typing-indicator">
+          <div class="assistant-avatar">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <div class="typing-container">
+            <div class="typing-indicator">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <span class="typing-text">EduBridge AI is formatting your answer...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chat Input Area (Floating Capsule like ChatGPT) -->
+      <footer class="chat-footer">
+        <div class="floating-input-capsule">
+          <!-- Current Settings Context Row -->
+          <div class="input-context-row">
+            <span class="context-pill" id="pill-subject"><i class="fa-solid fa-book"></i> General</span>
+            <span class="context-pill" id="pill-grade"><i class="fa-solid fa-user-graduate"></i> Class 8</span>
+            <span class="context-pill" id="pill-lang"><i class="fa-solid fa-earth-asia"></i> English</span>
+          </div>
+          
+          <div class="input-row">
+            <textarea id="chat-input" placeholder="Message EduBridge AI Assistant..." rows="1" aria-label="Message"></textarea>
+            <button id="btn-send" disabled aria-label="Send Message" title="Send Message">
+              <i class="fa-solid fa-arrow-up"></i>
+            </button>
+          </div>
+        </div>
+        <p class="disclaimer-text">EduBridge AI Assistant can make mistakes. Verify important info.</p>
+      </footer>
+    </main>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

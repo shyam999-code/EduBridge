@@ -1,0 +1,20 @@
+{
+  "name": "edubridge-backend",
+  "version": "1.0.0",
+  "description": "EduBridge smart school ERP backend business layer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.8",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "author": "EduBridge Team",
+  "license": "ISC"
+}
