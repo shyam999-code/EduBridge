@@ -212,7 +212,7 @@ const Homework = () => {
 
   return (
     <>
-      <div className="flex-between">
+      <div className="page-header">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>CLASS ASSIGNMENTS</span>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 800 }}>
@@ -230,7 +230,7 @@ const Homework = () => {
         <div className="widget-section">
           
           {/* Reusable Statistics Cards Header */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+          <div className="grid-3-cols">
             <Card variant="stats" label="Total Assigned" number={homeworkList.length} icon="📝" />
             <Card variant="stats" label="Pending Tasks" number={homeworkList.filter(h => h.status === 'Pending' || h.status === 'Urgent').length} icon="⌛" />
             <Card variant="stats" label="Completed Tasks" number={homeworkList.filter(h => h.status === 'Submitted' || h.status === 'Graded').length} icon="✔" trend={{ direction: 'up', value: 'Completed', label: 'status', color: 'success' }} />

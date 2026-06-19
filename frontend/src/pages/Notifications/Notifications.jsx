@@ -44,7 +44,7 @@ const Notifications = () => {
 
   return (
     <>
-      <div className="flex-between">
+      <div className="page-header">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>CAMPUS COMMUNICATIONS</span>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 800 }}>

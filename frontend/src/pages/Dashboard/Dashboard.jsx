@@ -268,7 +268,7 @@ const Dashboard = () => {
           {/* Main Area */}
           <div className="widget-section">
             <Card title="School Attendance & Grade Analytics">
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 2fr', gap: '2rem', flexWrap: 'wrap' }}>
+              <div className="analytics-grid">
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid var(--border-color)', paddingRight: '2rem' }}>
                   <h4 style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Today's Attendance Rate
@@ -371,7 +371,7 @@ const Dashboard = () => {
                     ct => ct.classId === dbClassId && ct.teacherId === teacherProfile?.id
                   );
                   return (
-                    <div key={cls.id} className="notice-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.25rem', borderLeftColor: 'var(--primary)' }}>
+                    <div key={cls.id} className="notice-card class-schedule-row" style={{ borderLeftColor: 'var(--primary)' }}>
                       <div>
                         <span className="badge badge-primary" style={{ marginBottom: '0.5rem' }}>{cls.id}</span>
                         <h4 style={{ fontSize: '1rem', fontWeight: 700 }}>{cls.name} &bull; {cls.subject}</h4>
@@ -442,7 +442,7 @@ const Dashboard = () => {
     const { stats, childDetails, teacherFeedback } = data;
     return (
       <>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)' }}>
+        <div className="parent-child-banner">
           <img src={childDetails.avatar} alt="Child Profile" style={{ width: '3.5rem', height: '3.5rem', borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)' }} />
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>MONITORED STUDENT PROFILE:</span>

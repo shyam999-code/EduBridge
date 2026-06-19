@@ -116,7 +116,7 @@ const Complaints = () => {
 
   return (
     <>
-      <div className="flex-between">
+      <div className="page-header">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>COMPLAINT BOX</span>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 800 }}>
@@ -130,7 +130,7 @@ const Complaints = () => {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+      <div className="grid-3-cols">
         <Card variant="stats" label="Total Filed Requests" number={complaints.length} icon="⚠️" />
         <Card variant="stats" label="Unresolved Complaints" number={complaints.length - resolvedCount} icon="⌛" trend={{ direction: 'up', value: `${pendingCount} new`, label: 'pending response', color: 'danger' }} />
         <Card variant="stats" label="Resolved Complaints" number={resolvedCount} icon="✔" trend={{ direction: 'up', value: `${resolvedCount}/${complaints.length}`, label: 'resolved', color: 'success' }} />

@@ -81,18 +81,8 @@ const Sidebar = ({ role, activeUser, teacherSubject, isOpen, onClose, childLinke
       <aside
         className={`sidebar ${isOpen ? 'active' : ''}`}
         style={{
-          width: '280px',
           backgroundColor: 'var(--bg-sidebar)',
-          color: 'var(--sidebar-text)',
-          display: 'flex',
-          flexDirection: 'column',
-          flexShrink: 0,
-          height: '100vh',
-          position: 'sticky',
-          top: 0,
-          left: 0,
-          zIndex: 100,
-          transition: 'all var(--transition-normal)'
+          color: 'var(--sidebar-text)'
         }}
       >
         {/* Sidebar Header: School Logo/Branding */}

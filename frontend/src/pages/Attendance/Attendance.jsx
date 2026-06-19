@@ -756,7 +756,7 @@ const Attendance = () => {
       <div className="dashboard-layout-main">
         {/* Main Side: Summary Cards & Daily logs list */}
         <div className="widget-section">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+          <div className="grid-3-cols">
             <Card variant="stats" label="Attended Classes" number={`${monthPresent} Days`} icon="✔" trend={{ direction: 'up', value: 'Present', label: 'this month', color: 'success' }} />
             <Card variant="stats" label="Absences" number={`${monthAbsent} Days`} icon="✖" trend={{ direction: 'down', value: 'Absent', label: 'this month', color: 'danger' }} />
             <Card variant="stats" label="Monthly Attendance Rate" number={`${monthPercentage}%`} icon="📈" trend={{ direction: 'up', value: `${monthPercentage}%`, label: 'current month', color: 'success' }} />

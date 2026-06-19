@@ -649,19 +649,7 @@ const Marks = () => {
       <div className="widget-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
         
         {/* Metrics Cards Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }} className="teacher-metrics-grid">
-          <style>{`
-            @media (max-width: 1024px) {
-              .teacher-metrics-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-              }
-            }
-            @media (max-width: 600px) {
-              .teacher-metrics-grid {
-                grid-template-columns: 1fr !important;
-              }
-            }
-          `}</style>
+        <div className="grid-4-cols">
           
           {/* Card 1: Pass Percentage */}
           <Card 
@@ -889,7 +877,7 @@ const Marks = () => {
       return (
         <div className="dashboard-layout-main" style={{ gridTemplateColumns: '1fr' }}>
           <div className="widget-section">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }} className="admin-metrics-grid">
+            <div className="grid-3-cols">
               <Card variant="stats" label="Average Academic Score" number={data?.percentage || 'N/A'} icon="🏅" />
               <Card variant="stats" label="Total Scored Marks" number={data ? `${data.totalMarks} / ${data.maxMarks}` : 'N/A'} icon="🏆" />
               <Card variant="stats" label="Overall Standing" number={data?.grade || 'N/A'} icon="📈" />
@@ -951,7 +939,7 @@ const Marks = () => {
         {/* Main Section */}
         <div className="widget-section">
           {/* Reusable stat cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }} className="admin-metrics-grid">
+          <div className="grid-4-cols">
             <Card variant="stats" label="Total Students Assessed" number="1,248" icon="👥" trend={{ direction: 'up', value: '+3.2%', label: 'vs last term', color: 'success' }} />
             <Card variant="stats" label="Overall Pass Rate" number="94.6%" icon="📈" trend={{ direction: 'up', value: 'Excellent', label: 'academic standing', color: 'success' }} />
             <Card variant="stats" label="Average Academic Score" number="82.4%" icon="🏅" trend={{ direction: 'up', value: '+1.2%', label: 'improvement', color: 'success' }} />
@@ -1201,18 +1189,7 @@ const Marks = () => {
         </div>
       )}
 
-      <style>{`
-        @media (max-width: 1024px) {
-          .admin-metrics-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-        }
-        @media (max-width: 600px) {
-          .admin-metrics-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
+
 
       {user.role === 'student' && !isStudentVerified ? (
         <div style={{ maxWidth: '560px', margin: '2rem auto' }}>
@@ -1280,7 +1257,7 @@ const Marks = () => {
         </div>
       ) : (
         <>
-          <div className="flex-between">
+          <div className="page-header">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
               {isFaculty && (
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>ACADEMIC MARKS</span>

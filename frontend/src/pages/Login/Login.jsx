@@ -152,29 +152,7 @@ const Login = () => {
       }} />
 
       {/* Main Split-Panel Frame */}
-      <div className="glass" style={{
-        width: '1000px',
-        maxWidth: '100%',
-        borderRadius: 'var(--radius-lg)',
-        boxShadow: 'var(--shadow-premium)',
-        display: 'grid',
-        gridTemplateColumns: '1.1fr 1fr',
-        overflow: 'hidden',
-        minHeight: '580px',
-        zIndex: 1
-      }}>
-        <style>{`
-          @media (max-width: 768px) {
-            .login-branding-panel {
-              display: none !important;
-            }
-            .glass {
-              grid-template-columns: 1fr !important;
-              max-width: 480px !important;
-              min-height: auto !important;
-            }
-          }
-        `}</style>
+      <div className="login-frame glass" style={{ zIndex: 1 }}>
 
         {/* Left Side: Branding Panel */}
         <div className="login-branding-panel" style={{

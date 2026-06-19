@@ -186,11 +186,9 @@ const TeacherLoginManagement = () => {
         {/* Right Column: Registered Teachers List */}
         <div className="widget-section" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <Card title="Registered Faculty Registry" subtitle="Roster of all faculty members with custom login details.">
-            <div style={{
+            <div className="table-responsive" style={{
               maxHeight: '500px',
               overflowY: 'auto',
-              border: '1px solid var(--border-color)',
-              borderRadius: 'var(--radius-md)',
               backgroundColor: 'var(--bg-primary)'
             }}>
               <Table

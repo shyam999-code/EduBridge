@@ -104,7 +104,7 @@ const Behaviour = () => {
 
   return (
     <>
-      <div className="flex-between">
+      <div className="page-header">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>CONDUCT REPORT</span>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 800 }}>
@@ -122,7 +122,7 @@ const Behaviour = () => {
         {/* Main Area: Timeline */}
         <div className="widget-section">
           {/* Conduct statistics */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>
+          <div className="grid-3-cols">
             <Card variant="stats" label="Conduct Score" number={data.points} icon="★" trend={{ direction: 'up', value: 'Excellent', label: 'standing', color: 'success' }} />
             <Card variant="stats" label="Accolades (Positive)" number={data.positiveCount} icon="🏆" trend={{ direction: 'up', value: '+14 logs', label: 'registered', color: 'success' }} />
             <Card variant="stats" label="Infractions (Negative)" number={data.negativeCount} icon="⚠️" trend={{ direction: 'down', value: '2 logs', label: 'registered', color: 'danger' }} />

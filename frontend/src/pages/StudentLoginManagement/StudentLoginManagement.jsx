@@ -113,7 +113,7 @@ const StudentLoginManagement = () => {
                 required
               />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.2fr', gap: '0.75rem' }}>
+              <div className="class-section-roll-grid">
                 <FormInput
                   label="Class/Grade *"
                   type="text"

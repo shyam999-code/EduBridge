@@ -138,10 +138,7 @@ const Profile = () => {
             </span>
 
             {/* Academic stats section */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '1rem',
+            <div className="grid-2-cols" style={{
               borderTop: '1px solid var(--border-color)',
               marginTop: '2rem',
               paddingTop: '1.5rem',

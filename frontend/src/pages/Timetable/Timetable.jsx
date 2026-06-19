@@ -422,7 +422,7 @@ const Timetable = () => {
       <div className="dashboard-layout-main" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
         <div className="widget-section" style={{ minWidth: 0, overflow: 'hidden' }}>
           {/* Navigation Tabs */}
-          <div style={{
+          <div className="responsive-tabs" style={{
             display: 'flex',
             borderBottom: '2px solid var(--border-color)',
             marginBottom: '1.5rem',
@@ -550,7 +550,7 @@ const Timetable = () => {
 
           {/* TAB 2: GENERAL SETTINGS & GATING */}
           {activeTab === 'settings' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="grid-2-cols">
               <Card title="Working Days & Attendance Gating" subtitle="General parameters of class scheduling.">
                 {/* Working days checkboxes */}
                 <div style={{ marginBottom: '2rem' }}>
@@ -639,13 +639,9 @@ const Timetable = () => {
                 {editingTimings.map((pt, index) => (
                   <div 
                     key={pt.id} 
+                    className="timing-config-row"
                     style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '1.25rem', 
-                      padding: '10px 15px', 
                       backgroundColor: pt.isBreak ? 'rgba(0,0,0,0.02)' : 'var(--bg-primary)', 
-                      borderRadius: 'var(--radius-sm)',
                       borderLeft: pt.isBreak ? '4px solid var(--border-color)' : '4px solid var(--primary)'
                     }}
                   >
@@ -793,15 +789,8 @@ const Timetable = () => {
       <div className="dashboard-layout-main" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
         <div className="widget-section" style={{ minWidth: 0, overflow: 'hidden' }}>
           {/* Class Teacher Banner */}
-          <div className="glass" style={{
-            padding: '1.25rem 1.75rem',
+          <div className="glass responsive-banner" style={{
             borderLeft: isClassTeacherOfSome ? '5px solid var(--success)' : '5px solid var(--primary)',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-md)'
           }}>
             <div>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '4px' }}>
@@ -913,15 +902,8 @@ const Timetable = () => {
       <div className="dashboard-layout-main" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
         <div className="widget-section" style={{ minWidth: 0, overflow: 'hidden' }}>
           {/* Class Banner */}
-          <div className="glass" style={{
-            padding: '1rem 1.5rem',
+          <div className="glass responsive-banner" style={{
             borderLeft: '5px solid var(--primary)',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-md)'
           }}>
             <div>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 800 }}>
@@ -1016,15 +998,8 @@ const Timetable = () => {
       <div className="dashboard-layout-main" style={{ gridTemplateColumns: 'minmax(0, 1fr)' }}>
         <div className="widget-section" style={{ minWidth: 0, overflow: 'hidden' }}>
           {/* Linked Child Info */}
-          <div className="glass" style={{
-            padding: '1.25rem 1.75rem',
+          <div className="glass responsive-banner" style={{
             borderLeft: '5px solid var(--secondary)',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: 'var(--shadow-md)'
           }}>
             <div>
               <h4 style={{ fontSize: '1.1rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

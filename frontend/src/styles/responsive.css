@@ -1,5 +1,18 @@
 /* Responsive Screen Adaptations (Plain CSS Media Queries) */
 
+.sidebar {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  transition: all var(--transition-normal);
+}
+
 /* Large Screens & Desktop Adjustments (Min-width: 1440px) */
 @media (min-width: 1440px) {
   .page-container {
@@ -146,3 +159,220 @@
     padding: 1.5rem !important;
   }
 }
+
+/* Responsive Grid Helper Classes */
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 768px) {
+  .grid-2-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.grid-3-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+@media (max-width: 1024px) {
+  .grid-3-cols {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 640px) {
+  .grid-3-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.grid-4-cols {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+@media (max-width: 1200px) {
+  .grid-4-cols {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 640px) {
+  .grid-4-cols {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 2fr;
+  gap: 2rem;
+}
+@media (max-width: 1024px) {
+  .analytics-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+}
+
+/* Custom Responsive Banners & Grids */
+.parent-child-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+@media (max-width: 576px) {
+  .parent-child-banner {
+    flex-direction: column !important;
+    text-align: center;
+    padding: 1.25rem 1rem;
+  }
+}
+
+.class-section-roll-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 0.75rem;
+}
+@media (max-width: 576px) {
+  .class-section-roll-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.login-frame {
+  width: 1000px;
+  max-width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-premium);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  overflow: hidden;
+  min-height: 580px;
+  z-index: 1;
+}
+@media (max-width: 992px) {
+  .login-frame {
+    grid-template-columns: 1fr !important;
+    max-width: 480px !important;
+    min-height: auto !important;
+  }
+}
+
+.class-schedule-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+}
+@media (max-width: 640px) {
+  .class-schedule-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem;
+  }
+  .class-schedule-row > div:last-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .analytics-grid > div:first-child {
+    border-right: none !important;
+    padding-right: 0 !important;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Responsive Banner Utility (stacks elements vertically on mobile) */
+.responsive-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.75rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 640px) {
+  .responsive-banner {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+}
+
+/* Responsive Tabs Navigation Utility */
+.responsive-tabs {
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.responsive-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+/* Period Timings Configuration Rows */
+.timing-config-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 10px 15px;
+  border-radius: var(--radius-sm);
+}
+@media (max-width: 640px) {
+  .timing-config-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+  .timing-config-row > div {
+    width: 100% !important;
+  }
+}
+
+/* Page Header Utility (stacks page title and action buttons on mobile) */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 1rem !important;
+  }
+  .page-header > div {
+    width: 100% !important;
+  }
+}
+
+/* Mobile-friendly touch targets */
+@media (max-width: 640px) {
+  button, 
+  .btn, 
+  input[type="text"], 
+  input[type="email"], 
+  input[type="password"], 
+  input[type="date"], 
+  select, 
+  textarea {
+    min-height: 44px !important;
+  }
+}
+
+

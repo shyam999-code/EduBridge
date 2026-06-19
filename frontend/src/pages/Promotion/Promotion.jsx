@@ -374,7 +374,7 @@ const Promotion = () => {
       {activeTab === 'class' && (
         <Card title="Promote Entire Classroom" subtitle="Move all students in one class directly to the next class level.">
           <form onSubmit={handlePromoteClassSubmit} className="form-container" style={{ maxWidth: '600px', margin: '0 auto', padding: '1rem 0' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="grid-2-cols" style={{ gap: '1rem' }}>
               <FormInput
                 label="Source Class (From)"
                 type="select"
@@ -610,14 +610,14 @@ const Promotion = () => {
                           borderRadius: 'var(--radius-md)',
                           border: '1px solid var(--border-color)'
                         }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', fontSize: '0.9rem' }}>
+                          <div className="grid-2-cols" style={{ gap: '1rem', fontSize: '0.9rem' }}>
                             <div><strong>Previous Class:</strong> {selectedPastRecord.previous_class_name}</div>
                             <div><strong>Academic Year:</strong> {selectedPastRecord.academic_year}</div>
                           </div>
                         </div>
 
                         {/* Metrics summaries */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="grid-2-cols" style={{ gap: '1rem' }}>
                           <Card title="Academic Summary" style={{ margin: 0 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.85rem' }}>
                               <div>📊 <strong>Average Score:</strong> {selectedPastRecord.marks_summary?.average_score || 0}%</div>
