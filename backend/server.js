@@ -47,52 +47,52 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Import Router Maps
-const studentRoutes = require('./routes/studentRoutes');
-const teacherRoutes = require('./routes/teacherRoutes');
-const parentRoutes = require('./routes/parentRoutes');
-const attendanceRoutes = require('./routes/attendanceRoutes');
-const marksRoutes = require('./routes/marksRoutes');
-const homeworkRoutes = require('./routes/homeworkRoutes');
-const behaviourRoutes = require('./routes/behaviourRoutes');
-const complaintRoutes = require('./routes/complaintRoutes');
-const announcementRoutes = require('./routes/announcementRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
-const reportRoutes = require('./routes/reportRoutes');
-const timetableRoutes = require('./routes/timetableRoutes');
-const promotionRoutes = require('./routes/promotionRoutes');
-
-// Mount Router Maps under /api prefix
-app.use('/api/students', studentRoutes);
-app.use('/api/teachers', teacherRoutes);
-app.use('/api/parents', parentRoutes);
-app.use('/api/attendance', attendanceRoutes);
-app.use('/api/marks', marksRoutes);
-app.use('/api/homework', homeworkRoutes);
-app.use('/api/behaviour', behaviourRoutes);
-app.use('/api/complaints', complaintRoutes);
-app.use('/api/announcements', announcementRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/reports', reportRoutes);
-app.use('/api/timetable', timetableRoutes);
-app.use('/api/promotions', promotionRoutes);
-
-// Fallback Route handler for 404 queries
-app.use((req, res, next) => {
-  res.status(404).json({
-    success: false,
-    error: {
-      message: `REST Endpoint ${req.method} ${req.originalUrl} not found.`,
-      code: 'RESOURCE_NOT_FOUND'
-    }
-  });
-});
-
-// Mount Centralized Error Gating Handler
-app.use(errorHandler);
-
-// Await Supabase connection verification, then start server
+// Await Supabase connection verification, then start server and mount routes
 supabaseClient.ready.then(() => {
+  // Import Router Maps
+  const studentRoutes = require('./routes/studentRoutes');
+  const teacherRoutes = require('./routes/teacherRoutes');
+  const parentRoutes = require('./routes/parentRoutes');
+  const attendanceRoutes = require('./routes/attendanceRoutes');
+  const marksRoutes = require('./routes/marksRoutes');
+  const homeworkRoutes = require('./routes/homeworkRoutes');
+  const behaviourRoutes = require('./routes/behaviourRoutes');
+  const complaintRoutes = require('./routes/complaintRoutes');
+  const announcementRoutes = require('./routes/announcementRoutes');
+  const notificationRoutes = require('./routes/notificationRoutes');
+  const reportRoutes = require('./routes/reportRoutes');
+  const timetableRoutes = require('./routes/timetableRoutes');
+  const promotionRoutes = require('./routes/promotionRoutes');
+
+  // Mount Router Maps under /api prefix
+  app.use('/api/students', studentRoutes);
+  app.use('/api/teachers', teacherRoutes);
+  app.use('/api/parents', parentRoutes);
+  app.use('/api/attendance', attendanceRoutes);
+  app.use('/api/marks', marksRoutes);
+  app.use('/api/homework', homeworkRoutes);
+  app.use('/api/behaviour', behaviourRoutes);
+  app.use('/api/complaints', complaintRoutes);
+  app.use('/api/announcements', announcementRoutes);
+  app.use('/api/notifications', notificationRoutes);
+  app.use('/api/reports', reportRoutes);
+  app.use('/api/timetable', timetableRoutes);
+  app.use('/api/promotions', promotionRoutes);
+
+  // Fallback Route handler for 404 queries
+  app.use((req, res, next) => {
+    res.status(404).json({
+      success: false,
+      error: {
+        message: `REST Endpoint ${req.method} ${req.originalUrl} not found.`,
+        code: 'RESOURCE_NOT_FOUND'
+      }
+    });
+  });
+
+  // Mount Centralized Error Gating Handler
+  app.use(errorHandler);
+
   app.listen(PORT, () => {
     console.log('=======================================================');
     console.log(` EDUBRIDGE BUSINESS LAYER API SERVER RUNNING ON PORT : ${PORT}`);

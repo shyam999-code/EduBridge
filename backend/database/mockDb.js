@@ -101,7 +101,6 @@ const defaultDb = {
 
 // Self-healing seed generator for 40 realistic students and marks in Latha's Telugu class
 const seedRealisticClass = (db) => {
-  return; // Disabled seeding of extra students to keep database clean as requested
   if (!db.students) db.students = [];
   if (!db.users) db.users = [];
   if (!db.marks) db.marks = [];
@@ -134,7 +133,8 @@ const seedRealisticClass = (db) => {
         name: name,
         email: `${name.toLowerCase().replace(/[^a-z0-9]/g, '')}@edubridge.com`,
         role: 'student',
-        status: 'active'
+        status: 'active',
+        password_hash: '$2a$10$gbis77QUuhkJ1PEURwn/WOBOQoGuwHHgA62MVoDKnwYCSlH/EiRny' // password123
       });
     }
 
@@ -275,9 +275,28 @@ const migrateGradeClasses = (db) => {
   db.students.forEach(student => {
     if (student.id.startsWith('std-seed-')) {
       const idx = parseInt(student.id.replace('std-seed-', ''), 10) - 1;
-      student.class_id = classIds[Math.min(Math.floor(idx / 7), 4)];
+      const classId = classIds[Math.min(Math.floor(idx / 7), 4)];
+      student.class_id = classId;
+      
+      const cls = db.classes.find(c => c.id === classId);
+      if (cls) {
+        const classNum = cls.name.replace(/[^0-9]/g, '');
+        const sectionMatch = cls.name.match(/-([A-Za-z])/);
+        const section = sectionMatch ? sectionMatch[1].toUpperCase() : 'A';
+        const rollClean = student.roll_number.replace(/[^0-9]/g, '').slice(-3);
+        student.student_id = `${classNum}${section}${rollClean}`;
+      }
     }
   });
+
+  // Self-heal user password hashes if any are missing
+  if (db.users) {
+    db.users.forEach(u => {
+      if (u.id.startsWith('usr-seed-') && !u.password_hash) {
+        u.password_hash = '$2a$10$gbis77QUuhkJ1PEURwn/WOBOQoGuwHHgA62MVoDKnwYCSlH/EiRny'; // password123
+      }
+    });
+  }
 };
 
 const seedTimetable = (db) => {

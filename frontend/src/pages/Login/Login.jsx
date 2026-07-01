@@ -27,6 +27,13 @@ const Login = () => {
   const [adminConfirmPassword, setAdminConfirmPassword] = useState('');
   const [registrationSuccessMsg, setRegistrationSuccessMsg] = useState('');
 
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   useEffect(() => {
     // Check if redirect was due to unauthorized access
     if (searchParams.get('unauthorized') === 'true') {
@@ -39,10 +46,11 @@ const Login = () => {
     setRole(demoRole);
     setUserId('');
     setPassword('');
-    setError('');
-    setUnauthorizedMsg(false);
+    setIsRegisterMode(false);
     setIsAdminRegisterMode(false);
     setRegistrationSuccessMsg('');
+    setError('');
+    setUnauthorizedMsg(false);
   };
 
   const handleAdminRegisterSubmit = (e) => {
@@ -127,6 +135,39 @@ const Login = () => {
       position: 'relative',
       overflow: 'hidden'
     }}>
+      {/* Floating Theme Switcher at Top-Right */}
+      <button
+        onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
+        title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+        style={{
+          position: 'absolute',
+          top: '1.5rem',
+          right: '1.5rem',
+          backgroundColor: 'var(--bg-secondary)',
+          border: '1px solid var(--border-color)',
+          color: 'var(--text-primary)',
+          fontSize: '1.2rem',
+          cursor: 'pointer',
+          padding: '0.6rem',
+          borderRadius: 'var(--radius-full)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          boxShadow: 'var(--shadow-md)',
+          transition: 'all var(--transition-fast)',
+          zIndex: 10
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.transform = 'scale(1.05)';
+          e.currentTarget.style.backgroundColor = 'var(--border-color)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.backgroundColor = 'var(--bg-secondary)';
+        }}
+      >
+        {theme === 'light' ? '🌙' : '☀️'}
+      </button>
       {/* Decorative Blur Orbs */}
       <div style={{
         position: 'absolute',

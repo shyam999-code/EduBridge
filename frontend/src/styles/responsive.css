@@ -263,6 +263,9 @@
     max-width: 480px !important;
     min-height: auto !important;
   }
+  .login-branding-panel {
+    display: none !important;
+  }
 }
 
 .class-schedule-row {

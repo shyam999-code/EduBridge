@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const authConfig = require('./config/authConfig');
-const authRoutes = require('./routes/authRoutes');
+const supabaseClient = require('./config/supabaseClient');
 
 // Initialize express app
 const app = express();
@@ -22,31 +22,37 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Mount Authentication Module Router
-app.use('/api/auth', authRoutes);
+// Await Supabase connection verification, then mount routes and start server
+supabaseClient.ready.then(() => {
+  const authRoutes = require('./routes/authRoutes');
 
-// Global Error Catching Middleware (Production-Grade JSON responses)
-app.use((err, req, res, next) => {
-  console.error(`[Error Catch Handler]: ${err.stack || err.message}`);
-  
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
-    success: false,
-    error: {
-      message: err.message || 'Internal Server Error',
-      code: err.code || 'INTERNAL_SERVER_ERROR'
-    }
+  // Mount Authentication Module Router
+  app.use('/api/auth', authRoutes);
+
+  // Global Error Catching Middleware (Production-Grade JSON responses)
+  app.use((err, req, res, next) => {
+    console.error(`[Error Catch Handler]: ${err.stack || err.message}`);
+    
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+      success: false,
+      error: {
+        message: err.message || 'Internal Server Error',
+        code: err.code || 'INTERNAL_SERVER_ERROR'
+      }
+    });
   });
-});
 
-// Start Express server listener
-const PORT = authConfig.port || 5000;
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(` EDUBRIDGE AUTH SERVICE RUNNING ON PORT : ${PORT}`);
-  console.log(` Environment Mode                        : Development`);
-  console.log(` Health Check API                        : GET /health`);
-  console.log(`=======================================================`);
+  // Start Express server listener
+  const PORT = authConfig.port || 5000;
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(` EDUBRIDGE AUTH SERVICE RUNNING ON PORT : ${PORT}`);
+    console.log(` Environment Mode                        : Development`);
+    console.log(` Health Check API                        : GET /health`);
+    console.log(` Database Mode                           : ${supabaseClient.isConfigured ? 'Supabase PostgreSQL cloud' : 'Local persistent memory mock engine'}`);
+    console.log(`=======================================================`);
+  });
 });
 
 module.exports = app; // Export for testing suites

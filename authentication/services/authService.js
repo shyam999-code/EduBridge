@@ -457,69 +457,185 @@ const registerUser = async (emailOrUserId, password, role) => {
   const normalizedInput = emailOrUserId.toLowerCase();
   const email = emailOrUserId.includes('@') ? emailOrUserId : `${emailOrUserId}@edubridge.com`;
 
-  if (isConfigured) {
-    // Check if user exists in Supabase
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .maybeSingle();
+  let useFallback = false;
+  let existingUser = null;
 
-    if (existingUser) {
-      const error = new Error('An account with these credentials already exists.');
-      error.statusCode = 400;
-      error.code = 'USER_ALREADY_EXISTS';
-      throw error;
+  if (isConfigured) {
+    try {
+      // Check if user exists in Supabase
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+      existingUser = data;
+
+      if (existingUser) {
+        const error = new Error('An account with these credentials already exists.');
+        error.statusCode = 400;
+        error.code = 'USER_ALREADY_EXISTS';
+        throw error;
+      }
+
+      const name = emailOrUserId.split('@')[0].toUpperCase();
+      const password_hash = await passwordHelper.hashPassword(password);
+
+      const { data: newUser, error: userError } = await supabase
+        .from('users')
+        .insert([{
+          name,
+          email,
+          password_hash,
+          role: role || 'student',
+          status: 'active'
+        }])
+        .select()
+        .single();
+
+      if (userError) throw userError;
+
+      // Create role-specific profiles in Supabase
+      if (role === 'teacher') {
+        const { error: teacherError } = await supabase
+          .from('teachers')
+          .insert([{
+            user_id: newUser.id,
+            designation: 'Faculty Tutor',
+            joining_date: new Date().toISOString().split('T')[0],
+            address: '',
+            phone: ''
+          }]);
+        if (teacherError) console.error('Failed to create teacher profile on register:', teacherError);
+      } else if (role === 'student') {
+        const { error: studentError } = await supabase
+          .from('students')
+          .insert([{
+            user_id: newUser.id,
+            roll_number: `ET-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            address: '',
+            phone: ''
+          }]);
+        if (studentError) console.error('Failed to create student profile on register:', studentError);
+      } else if (role === 'parent') {
+        const { error: parentError } = await supabase
+          .from('parents')
+          .insert([{
+            user_id: newUser.id,
+            address: '',
+            phone: ''
+          }]);
+        if (parentError) console.error('Failed to create parent profile on register:', parentError);
+      }
+
+      return {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+        status: newUser.status
+      };
+    } catch (err) {
+      if (err.code === 'USER_ALREADY_EXISTS' || err.statusCode === 400) {
+        throw err;
+      }
+      console.warn('Supabase registration failed, falling back to mockDb:', err.message);
+      useFallback = true;
+    }
+  } else {
+    useFallback = true;
+  }
+
+  if (useFallback) {
+    const mockDbPath = path.join(__dirname, '../../backend/database/mockDb.json');
+    let data = { users: [] };
+    if (fs.existsSync(mockDbPath)) {
+      try {
+        const raw = fs.readFileSync(mockDbPath, 'utf8');
+        data = JSON.parse(raw);
+      } catch (e) {
+        console.error('Failed to parse backend mockDb.json inside registerUser:', e);
+      }
     }
 
-    const name = emailOrUserId.split('@')[0].toUpperCase();
-    const password_hash = await passwordHelper.hashPassword(password);
+    if (!Array.isArray(data.users)) {
+      data.users = [];
+    }
 
-    const { data: newUser, error: userError } = await supabase
-      .from('users')
-      .insert([{
-        name,
-        email,
-        password_hash,
-        role: role || 'student',
-        status: 'active'
-      }])
-      .select()
-      .single();
+    // Find if there is a matching user already in mockDb.json
+    let existingUser = data.users.find(
+      u => u.email.toLowerCase() === normalizedInput || 
+           u.id.toLowerCase() === normalizedInput ||
+           u.id.toLowerCase().replace('uuid-', '') === normalizedInput ||
+           u.email.split('@')[0].toLowerCase() === normalizedInput
+    );
 
-    if (userError) throw userError;
+    // If not found in mockDb.json, check if they exist in LOCAL_MOCK_DB
+    if (!existingUser) {
+      const inMock = LOCAL_MOCK_DB.find(
+        u => u.email.toLowerCase() === normalizedInput || 
+             u.id.toLowerCase() === normalizedInput ||
+             u.id.toLowerCase().replace('uuid-', '') === normalizedInput ||
+             u.email.split('@')[0].toLowerCase() === normalizedInput
+      );
+      if (inMock) {
+        existingUser = { ...inMock };
+      }
+    }
 
-    // Create role-specific profiles in Supabase
-    if (role === 'teacher') {
-      const { error: teacherError } = await supabase
-        .from('teachers')
-        .insert([{
-          user_id: newUser.id,
-          designation: 'Faculty Tutor',
-          joining_date: new Date().toISOString().split('T')[0],
-          address: '',
-          phone: ''
-        }]);
-      if (teacherError) console.error('Failed to create teacher profile on register:', teacherError);
-    } else if (role === 'student') {
-      const { error: studentError } = await supabase
-        .from('students')
-        .insert([{
-          user_id: newUser.id,
-          roll_number: `ET-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-          address: '',
-          phone: ''
-        }]);
-      if (studentError) console.error('Failed to create student profile on register:', studentError);
-    } else if (role === 'parent') {
-      const { error: parentError } = await supabase
-        .from('parents')
-        .insert([{
-          user_id: newUser.id,
-          address: '',
-          phone: ''
-        }]);
-      if (parentError) console.error('Failed to create parent profile on register:', parentError);
+    if (existingUser) {
+      if (existingUser.password_hash) {
+        const error = new Error('An account with these credentials already exists.');
+        error.statusCode = 400;
+        error.code = 'USER_ALREADY_EXISTS';
+        throw error;
+      }
+
+      existingUser.password_hash = await passwordHelper.hashPassword(password);
+      if (role && !existingUser.role) {
+        existingUser.role = role;
+      }
+
+      const index = data.users.findIndex(u => u.id === existingUser.id);
+      if (index !== -1) {
+        data.users[index] = existingUser;
+      } else {
+        data.users.push(existingUser);
+      }
+
+      try {
+        fs.writeFileSync(mockDbPath, JSON.stringify(data, null, 2), 'utf8');
+      } catch (e) {
+        console.error('Failed to update pre-created user in mockDb.json:', e);
+      }
+
+      return {
+        id: existingUser.id,
+        name: existingUser.name,
+        email: existingUser.email,
+        role: existingUser.role,
+        status: existingUser.status || 'active'
+      };
+    }
+
+    const newUser = {
+      id: `uuid-${normalizedInput.replace(/[^a-z0-9]/g, '') || 'newuser'}`,
+      name: emailOrUserId.split('@')[0].toUpperCase(),
+      email: email,
+      password_hash: await passwordHelper.hashPassword(password),
+      role: role || 'student',
+      status: 'active'
+    };
+
+    data.users.push(newUser);
+
+    try {
+      fs.writeFileSync(mockDbPath, JSON.stringify(data, null, 2), 'utf8');
+    } catch (e) {
+      console.error('Failed to write new user to mockDb.json:', e);
     }
 
     return {
@@ -530,102 +646,6 @@ const registerUser = async (emailOrUserId, password, role) => {
       status: newUser.status
     };
   }
-
-  const mockDbPath = path.join(__dirname, '../../backend/database/mockDb.json');
-  let data = { users: [] };
-  if (fs.existsSync(mockDbPath)) {
-    try {
-      const raw = fs.readFileSync(mockDbPath, 'utf8');
-      data = JSON.parse(raw);
-    } catch (e) {
-      console.error('Failed to parse backend mockDb.json inside registerUser:', e);
-    }
-  }
-
-  if (!Array.isArray(data.users)) {
-    data.users = [];
-  }
-
-  // Find if there is a matching user already in mockDb.json
-  let existingUser = data.users.find(
-    u => u.email.toLowerCase() === normalizedInput || 
-         u.id.toLowerCase() === normalizedInput ||
-         u.id.toLowerCase().replace('uuid-', '') === normalizedInput ||
-         u.email.split('@')[0].toLowerCase() === normalizedInput
-  );
-
-  // If not found in mockDb.json, check if they exist in LOCAL_MOCK_DB
-  if (!existingUser) {
-    const inMock = LOCAL_MOCK_DB.find(
-      u => u.email.toLowerCase() === normalizedInput || 
-           u.id.toLowerCase() === normalizedInput ||
-           u.id.toLowerCase().replace('uuid-', '') === normalizedInput ||
-           u.email.split('@')[0].toLowerCase() === normalizedInput
-    );
-    if (inMock) {
-      existingUser = { ...inMock };
-    }
-  }
-
-  if (existingUser) {
-    if (existingUser.password_hash) {
-      const error = new Error('An account with these credentials already exists.');
-      error.statusCode = 400;
-      error.code = 'USER_ALREADY_EXISTS';
-      throw error;
-    }
-
-    existingUser.password_hash = await passwordHelper.hashPassword(password);
-    if (role && !existingUser.role) {
-      existingUser.role = role;
-    }
-
-    const index = data.users.findIndex(u => u.id === existingUser.id);
-    if (index !== -1) {
-      data.users[index] = existingUser;
-    } else {
-      data.users.push(existingUser);
-    }
-
-    try {
-      fs.writeFileSync(mockDbPath, JSON.stringify(data, null, 2), 'utf8');
-    } catch (e) {
-      console.error('Failed to update pre-created user in mockDb.json:', e);
-    }
-
-    return {
-      id: existingUser.id,
-      name: existingUser.name,
-      email: existingUser.email,
-      role: existingUser.role,
-      status: existingUser.status || 'active'
-    };
-  }
-
-  const newUser = {
-    id: `uuid-${normalizedInput.replace(/[^a-z0-9]/g, '') || 'newuser'}`,
-    name: emailOrUserId.split('@')[0].toUpperCase(),
-    email: email,
-    password_hash: await passwordHelper.hashPassword(password),
-    role: role || 'student',
-    status: 'active'
-  };
-
-  data.users.push(newUser);
-
-  try {
-    fs.writeFileSync(mockDbPath, JSON.stringify(data, null, 2), 'utf8');
-  } catch (e) {
-    console.error('Failed to write new user to mockDb.json:', e);
-  }
-
-  return {
-    id: newUser.id,
-    name: newUser.name,
-    email: newUser.email,
-    role: newUser.role,
-    status: newUser.status
-  };
 };
 
 const registerAdminRequest = async (fullName, schoolName, email, mobileNumber, password) => {
