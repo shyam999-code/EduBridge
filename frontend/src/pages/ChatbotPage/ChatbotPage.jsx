@@ -17,7 +17,7 @@ const ChatbotPage = () => {
       }}
     >
       <iframe
-        src={`http://localhost:5005/?userId=${userId}`}
+        src={`https://edubridge-chatbot.onrender.com/?userId=${userId}`}
         title="EduBridge AI Assistant Chatbot"
         style={{
           width: '100%',
