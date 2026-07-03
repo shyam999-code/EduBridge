@@ -51,12 +51,12 @@ const defaultDb = {
     { id: 'student-uuid-olivia', name: 'Olivia Vance', email: 'olivia@edubridge.com', role: 'student', status: 'active' }
   ],
   students: [
-    { id: 'e1111111-1111-1111-1111-111111111111', user_id: 'student-uuid-4004', roll_number: 'ET-2026-1042', class_id: 'c1111111-1111-1111-1111-111111111111', address: '404 Oakwood Lane, Crestview', phone: '+1 (555) 012-7489', date_of_birth: '2006-01-15' },
-    { id: 'student-clara-id', user_id: 'student-uuid-clara', roll_number: 'ET-2026-1002', class_id: 'c1111111-1111-1111-1111-111111111111', address: '129 Birchwood Avenue, Riverdale', phone: '+1 (555) 014-9822', date_of_birth: '2006-02-20' },
-    { id: 'student-olivia-id', user_id: 'student-uuid-olivia', roll_number: 'ET-2026-1005', class_id: 'c1111111-1111-1111-1111-111111111111', address: '782 Pinecrest Blvd, Hillsboro', phone: '+1 (555) 019-2831', date_of_birth: '2006-03-25' }
+    { id: 'e1111111-1111-1111-1111-111111111111', user_id: 'student-uuid-4004', student_id: '8D46', roll_number: 'ET-2026-1042', class_id: 'c1111111-1111-1111-1111-111111111111', address: '404 Oakwood Lane, Crestview', phone: '+1 (555) 012-7489', date_of_birth: '2006-01-15' },
+    { id: 'student-clara-id', user_id: 'student-uuid-clara', student_id: '10A1002', roll_number: 'ET-2026-1002', class_id: 'c1111111-1111-1111-1111-111111111111', address: '129 Birchwood Avenue, Riverdale', phone: '+1 (555) 014-9822', date_of_birth: '2006-02-20' },
+    { id: 'student-olivia-id', user_id: 'student-uuid-olivia', student_id: '10A1005', roll_number: 'ET-2026-1005', class_id: 'c1111111-1111-1111-1111-111111111111', address: '782 Pinecrest Blvd, Hillsboro', phone: '+1 (555) 019-2831', date_of_birth: '2006-03-25' }
   ],
   teachers: [
-    { id: 'd1111111-1111-1111-1111-111111111111', user_id: 'teacher-uuid-2002', subject: 'Mathematics', designation: 'Senior Mathematics & Physics Tutor', address: '128 Birchwood Avenue, Riverdale', phone: '+1 (555) 014-9821' }
+    { id: 'd1111111-1111-1111-1111-111111111111', user_id: 'teacher-uuid-2002', teacher_id: 'T001', date_of_birth: '1990-05-12', subject: 'Mathematics', designation: 'Senior Mathematics & Physics Tutor', address: '128 Birchwood Avenue, Riverdale', phone: '+1 (555) 014-9821' }
   ],
   parents: [
     { id: 'f1111111-1111-1111-1111-111111111111', user_id: 'parent-uuid-3003', child_id: 'e1111111-1111-1111-1111-111111111111', designation: 'Chief Architect, Sterling Design', address: '404 Oakwood Lane, Crestview', phone: '+1 (555) 017-4839' }
@@ -142,6 +142,7 @@ const seedRealisticClass = (db) => {
       db.students.push({
         id: sId,
         user_id: uId,
+        student_id: `10A${500 + idx}`,
         roll_number: rollNo,
         class_id: 'c1111111-1111-1111-1111-111111111111',
         address: '505 Jubilee Hills, Hyderabad',
@@ -358,6 +359,42 @@ const migratePromotionTables = (db) => {
   }
 };
 migratePromotionTables(mockDb);
+
+// Self-healing migration for login identifiers
+const migrateLoginIds = (db) => {
+  if (db.teachers) {
+    db.teachers.forEach(t => {
+      if (t.user_id === 'teacher-uuid-2002' || t.id === 'd1111111-1111-1111-1111-111111111111') {
+        if (!t.teacher_id) t.teacher_id = 'T001';
+        if (!t.date_of_birth) t.date_of_birth = '1990-05-12';
+      }
+    });
+  }
+
+  if (db.students) {
+    db.students.forEach(s => {
+      if (!s.student_id) {
+        if (s.user_id === 'student-uuid-4004' || s.id === 'e1111111-1111-1111-1111-111111111111') {
+          s.student_id = '8D46';
+        } else if (s.user_id === 'student-uuid-clara' || s.id === 'student-clara-id') {
+          s.student_id = '10A1002';
+        } else if (s.user_id === 'student-uuid-olivia' || s.id === 'student-olivia-id') {
+          s.student_id = '10A1005';
+        } else if (s.id.startsWith('std-seed-')) {
+          const idx = parseInt(s.id.replace('std-seed-', '')) - 1;
+          s.student_id = `10A${500 + idx}`;
+        } else {
+          const classObj = db.classes ? db.classes.find(c => c.id === s.class_id) : null;
+          const classNum = classObj ? classObj.name.replace(/[^0-9]/g, '') : '8';
+          const section = classObj ? (classObj.name.split('-')[1] || 'D').trim().toUpperCase() : 'D';
+          const rollNo = s.roll_number ? s.roll_number.replace(/[^0-9]/g, '') : '99';
+          s.student_id = `${classNum}${section}${rollNo}`;
+        }
+      }
+    });
+  }
+};
+migrateLoginIds(mockDb);
 
 // Self-healing migration for 8 periods in existing DB
 if (mockDb.timetable && mockDb.timetable.periodTimings) {

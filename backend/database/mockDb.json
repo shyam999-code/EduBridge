@@ -357,7 +357,7 @@
       "user_id": "teacher-uuid-2002",
       "teacher_id": "T001",
       "date_of_birth": "1990-05-12",
-      "subject": "Science",
+      "subject": "Telugu",
       "designation": "Senior Faculty Tutor",
       "address": "128 Birchwood Avenue, Riverdale",
       "phone": "+1 (555) 014-9821"
@@ -814,7 +814,8 @@
       "class_id": "c1111111-1111-1111-1111-111111111111",
       "address": "404 Oakwood Lane, Crestview",
       "phone": "+1 (555) 012-7489",
-      "status": "Enrolled"
+      "status": "Enrolled",
+      "student_id": "8D20268626"
     },
     {
       "id": "std-uuidshyam",
@@ -823,7 +824,8 @@
       "class_id": "c1111111-1111-1111-1111-111111111111",
       "address": "404 Oakwood Lane, Crestview",
       "phone": "+1 (555) 012-7489",
-      "status": "Enrolled"
+      "status": "Enrolled",
+      "student_id": "8D20267186"
     }
   ],
   "parents": [

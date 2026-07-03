@@ -272,6 +272,8 @@ const authenticateUser = async (emailOrUserId, password, role) => {
 
   let user = null;
   let useFallback = false;
+  let teacherRecord = null;
+  let studentRecord = null;
 
   if (isConfigured) {
     try {
@@ -283,6 +285,7 @@ const authenticateUser = async (emailOrUserId, password, role) => {
           .maybeSingle();
         if (teacher && teacher.user) {
           user = teacher.user;
+          teacherRecord = teacher;
         }
       } else if (role === 'student') {
         const { data: student, error: sErr } = await supabase
@@ -292,6 +295,7 @@ const authenticateUser = async (emailOrUserId, password, role) => {
           .maybeSingle();
         if (student && student.user) {
           user = student.user;
+          studentRecord = student;
         }
       } else if (role === 'parent') {
         const { data: parent, error: pErr } = await supabase
@@ -323,6 +327,14 @@ const authenticateUser = async (emailOrUserId, password, role) => {
         const { data, error } = await query.maybeSingle();
         if (!error && data) {
           user = data;
+          
+          if (role === 'teacher') {
+            const { data: t } = await supabase.from('teachers').select('*').eq('user_id', user.id).maybeSingle();
+            if (t) teacherRecord = t;
+          } else if (role === 'student') {
+            const { data: s } = await supabase.from('students').select('*').eq('user_id', user.id).maybeSingle();
+            if (s) studentRecord = s;
+          }
         }
       }
     } catch (err) {
@@ -348,11 +360,13 @@ const authenticateUser = async (emailOrUserId, password, role) => {
       const teacher = dbData.teachers.find(t => t.teacher_id && t.teacher_id.toLowerCase() === emailOrUserId.toLowerCase());
       if (teacher) {
         user = allUsers.find(u => u.id === teacher.user_id);
+        teacherRecord = teacher;
       }
     } else if (role === 'student' && Array.isArray(dbData.students)) {
       const student = dbData.students.find(s => s.student_id && s.student_id.toLowerCase() === emailOrUserId.toLowerCase());
       if (student) {
         user = allUsers.find(u => u.id === student.user_id);
+        studentRecord = student;
       }
     } else if (role === 'parent' && Array.isArray(dbData.parents)) {
       const parent = dbData.parents.find(p => p.phone && p.phone === emailOrUserId);
@@ -370,6 +384,13 @@ const authenticateUser = async (emailOrUserId, password, role) => {
              u.email.split('@')[0].toLowerCase() === emailOrUserId.toLowerCase() ||
              u.role === emailOrUserId.toLowerCase()
       );
+      if (user) {
+        if (role === 'teacher' && Array.isArray(dbData.teachers)) {
+          teacherRecord = dbData.teachers.find(t => t.user_id === user.id);
+        } else if (role === 'student' && Array.isArray(dbData.students)) {
+          studentRecord = dbData.students.find(s => s.user_id === user.id);
+        }
+      }
     }
   }
 
@@ -387,7 +408,24 @@ const authenticateUser = async (emailOrUserId, password, role) => {
     throw error;
   }
 
-  const isMatch = await passwordHelper.comparePassword(password, user.password_hash);
+  let isMatch = false;
+  const cleanPassword = password.replace(/[^0-9]/g, '');
+
+  if (role === 'teacher' && teacherRecord && teacherRecord.date_of_birth) {
+    const dobStr = formatDateToDDMMYYYY(teacherRecord.date_of_birth);
+    if (dobStr && cleanPassword === dobStr) {
+      isMatch = true;
+    }
+  } else if (role === 'student' && studentRecord && studentRecord.date_of_birth) {
+    const dobStr = formatDateToDDMMYYYY(studentRecord.date_of_birth);
+    if (dobStr && cleanPassword === dobStr) {
+      isMatch = true;
+    }
+  }
+
+  if (!isMatch) {
+    isMatch = await passwordHelper.comparePassword(password, user.password_hash);
+  }
 
   if (!isMatch) {
     const error = new Error('Invalid login credentials password.');
