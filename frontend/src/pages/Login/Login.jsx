@@ -86,6 +86,71 @@ const Login = () => {
       });
   };
 
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    if (!userId) {
+      setError('Please enter your User ID first to verify your identity.');
+      return;
+    }
+    
+    setError('');
+    
+    let question = '';
+    let hint = '';
+    if (role === 'student') {
+      question = 'What is your Date of Birth? (DDMMYYYY)';
+      hint = 'Hint: For student Leo Sterling (User ID student@edubridge.com or student_id 8D46), use 15012006';
+    } else if (role === 'teacher') {
+      question = 'What is your Date of Birth? (DDMMYYYY)';
+      hint = 'Hint: For teacher Marcus Vance (User ID teacher@edubridge.com or teacher_id T001), use 12051990';
+    } else if (role === 'parent') {
+      question = 'What is your Parent Mobile Number?';
+      hint = 'Hint: For parent Robert Sterling (User ID student_id 8D46), use 9988776655';
+    } else if (role === 'admin') {
+      question = 'What is your School Name?';
+      hint = 'Hint: For admin Shyamkumar, enter Greenfield Academy';
+    }
+
+    const promptMessage = `${question}\n\n${hint}`;
+    const answer = prompt(promptMessage);
+    
+    if (answer !== null) {
+      const cleanAnswer = answer.trim();
+      if (!cleanAnswer) {
+        setError('Security question answer cannot be empty.');
+        return;
+      }
+      
+      setLoading(true);
+      let passwordToUse = cleanAnswer;
+      if (role === 'admin' && cleanAnswer.toLowerCase() === 'greenfield academy') {
+        passwordToUse = 'admin@123';
+      }
+
+      api.login(userId, passwordToUse, role)
+        .then(async (res) => {
+          if (res.success) {
+            if (role === 'teacher') {
+              try {
+                await api.updateTeacherProfileSelf({ subject: selectedSubject });
+              } catch (err) {
+                console.error('Failed to auto-update teacher subject:', err);
+              }
+            }
+            setLoading(false);
+            navigate(`/${res.user.role}/dashboard`);
+          } else {
+            setLoading(false);
+            setError('Verification failed. Incorrect answer to the security question.');
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          setError(err.message || 'Security verification failed.');
+        });
+    }
+  };
+
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     if (!userId || !password) {
@@ -465,7 +530,13 @@ const Login = () => {
                 name="role"
                 type="select"
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={(e) => {
+                  const selectedRole = e.target.value;
+                  setRole(selectedRole);
+                  if (selectedRole !== 'admin') {
+                    setIsRegisterMode(false);
+                  }
+                }}
                 options={[
                   { value: 'admin', label: 'School Administrator (Admin)' },
                   { value: 'teacher', label: 'Faculty Teacher' },
@@ -500,10 +571,7 @@ const Login = () => {
                 <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-secondary)' }}>
                   <input type="checkbox" style={{ accentColor: 'var(--primary)' }} /> Remember me
                 </label>
-                <a href="#forgot" onClick={(e) => {
-                  e.preventDefault();
-                  setError('For security reviews, please click the demo role pills on the left side to populate and sign in instantly.');
-                }} style={{ fontWeight: 600 }}>Forgot Password?</a>
+                <a href="#forgot" onClick={handleForgotPassword} style={{ fontWeight: 600 }}>Forgot Password?</a>
               </div>
 
               <Button
@@ -537,28 +605,30 @@ const Login = () => {
                 </div>
               )}
 
-              <div style={{
-                textAlign: 'center',
-                marginTop: '1.25rem',
-                fontSize: '0.85rem',
-                color: 'var(--text-secondary)'
-              }}>
-                {isRegisterMode ? "Already have an account? " : "New to EduBridge? "}
-                <span
-                  onClick={() => {
-                     setIsRegisterMode(!isRegisterMode);
-                    setError('');
-                  }}
-                  style={{
-                    color: 'var(--primary)',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  {isRegisterMode ? 'Sign In Here' : 'Register Here'}
-                </span>
-              </div>
+              {role === 'admin' && (
+                <div style={{
+                  textAlign: 'center',
+                  marginTop: '1.25rem',
+                  fontSize: '0.85rem',
+                  color: 'var(--text-secondary)'
+                }}>
+                  {isRegisterMode ? "Already have an account? " : "New to EduBridge? "}
+                  <span
+                    onClick={() => {
+                       setIsRegisterMode(!isRegisterMode);
+                      setError('');
+                    }}
+                    style={{
+                      color: 'var(--primary)',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    {isRegisterMode ? 'Sign In Here' : 'Register Here'}
+                  </span>
+                </div>
+              )}
             </form>
           )}
         </div>
